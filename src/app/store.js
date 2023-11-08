@@ -7,8 +7,8 @@ const logger = createLogger();
 
 export const store = configureStore({
   reducer: {
-    user: countSlice,
-    // user: userSlice,
+    // user: countSlice,
+    user: userSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

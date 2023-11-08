@@ -5,17 +5,40 @@ import {
   Stack,
   TextField,
   Typography,
+  Menu,
+  MenuItem,
+  Divider,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import "@fontsource/inter";
 import HeartIcon from "../../Assets/Icons/HeartIcon";
 import CartIcon from "../../Assets/Icons/CartIcon";
 import SearchIcon from "../../Assets/Icons/SearchIcon";
 import Theme from "../../Theme/Theme";
 import MenuIcon from "../../Assets/Icons/MenuIcon";
+import { useNavigate, useLocation } from "react-router-dom";
+import ProfileIcon from "../../Assets/Icons/ProfileIcon";
+import UserIcon from "../../Assets/Icons/UserIcon";
+import OrderIcon from "../../Assets/Icons/OrderIcon";
+import LogoutIcon from "../../Assets/Icons/LogoutIcon";
+import useSelectors from "../../app/selectors";
+import { logoutUser } from "../../features/users/userSlice";
 
 const Navbar = () => {
+  const { dispatch } = useSelectors();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { tablet, mobile } = Theme();
+  const showIcons =
+    location.pathname === "/login" || location.pathname === "/sign-up";
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const navItems = [
     {
       name: "Home",
@@ -29,11 +52,21 @@ const Navbar = () => {
       name: "About",
       path: "/about",
     },
-    {
-      name: "Sign up",
-      path: "/signup",
-    },
   ];
+  const handleLogout = async () => {
+    try {
+      // Dispatch the createUserAsync action to create a user
+      await dispatch(logoutUser());
+      console.log("logout");
+      // The above dispatch will automatically handle loading, success, and error states.
+      // You can handle any further actions or UI updates as needed.
+
+      // If the user creation was successful, navigate to the desired route
+      navigate("/login");
+    } catch (error) {
+      // Handle any errors, if necessary
+    }
+  };
   return (
     <Container sx={{ position: "fixed" }} maxWidth="xl" disableGutters>
       <Stack
@@ -80,12 +113,15 @@ const Navbar = () => {
                   lineHeight="24px"
                   sx={{
                     borderBottom: "1px solid transparent",
+                    borderBottomColor:
+                      location.pathname === item.path ? "#000" : "transparent",
                     cursor: "pointer",
                     "&:hover": {
                       borderBottomColor: "#000",
                     },
                   }}
                   key={item.name}
+                  onClick={() => navigate(item.path)}
                 >
                   {item.name}
                 </Typography>
@@ -96,7 +132,7 @@ const Navbar = () => {
                 display="flex"
                 alignItems="center"
                 px="12px"
-                gap="16px"
+                // gap="16px"
                 py="7px"
                 bgcolor="#f5f5f5"
               >
@@ -107,22 +143,123 @@ const Navbar = () => {
           }} id="search" name='search' placeholder='What are you looking for?' margin='none' size='small' inputProps={{
             endIcon: <SendIcon />
           }} /> */}
-                <Input
+                <TextField
+                  size="small"
                   id="search"
                   name="search"
+                  type="search"
                   placeholder="What are you looking for?"
-                  sx={{ fontSize: "12px", width: "158px" }}
+                  margin="none"
+                  variant="standard"
+                  fullWidth
+                  sx={{ fontSize: "12px", width: "220px" }}
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
                 />
                 <SearchIcon />
               </Box>
-              <Box display="flex" gap="16px">
-                <Box sx={{ cursor: "pointer" }}>
-                  <HeartIcon />
+              {!showIcons && (
+                <Box display="flex" gap="16px">
+                  <Box
+                    onClick={() => navigate("/wishlist")}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <HeartIcon />
+                  </Box>
+                  <Box
+                    onClick={() => navigate("/cart")}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <CartIcon />
+                  </Box>
                 </Box>
-                <Box sx={{ cursor: "pointer" }}>
-                  <CartIcon />
-                </Box>
+              )}
+              <Box onClick={handleClick} sx={{ cursor: "pointer" }}>
+                <ProfileIcon />
               </Box>
+              <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "rgba(0, 0, 0, 0.04)",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                <MenuItem
+                  onClick={handleClose}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <UserIcon />
+                  Manage My Account
+                </MenuItem>
+                <MenuItem
+                  onClick={handleClose}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <OrderIcon />
+                  My Order
+                </MenuItem>
+                <MenuItem
+                  onClick={handleClose}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <HeartIcon />
+                  My Wishlist
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <LogoutIcon />
+                  Logout
+                </MenuItem>
+              </Menu>
             </Box>
           </>
         )}
@@ -130,5 +267,4 @@ const Navbar = () => {
     </Container>
   );
 };
-
 export default Navbar;

@@ -1,5 +1,11 @@
 import React from "react";
-import { Stack, Typography, Box, InputAdornment, Input } from "@mui/material";
+import {
+  Stack,
+  Typography,
+  Box,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import SendIcon from "../../Assets/Icons/SendIcon";
 
 const Footer = () => {
@@ -52,22 +58,34 @@ const Footer = () => {
               </InputAdornment>
             ),
             }} name='email' placeholder='Enter your email' margin='none' size='small' /> */}
-          <Input
-            id="search"
-            name="search"
-            placeholder="Enter your email?"
+          <TextField
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            type="email"
+            size="small"
+            margin="none"
+            variant="standard"
             sx={{
               fontSize: "12px",
               px: "16px",
               py: "12px",
-              border: "1px solid white",
-              color: "#fafafa",
+              borderRadius: "4px",
+              border: "1px solid #fafafa",
+              "& input": {
+                color: "#fafafa",
+                padding: "0px",
+              },
+              zIndex: 1,
             }}
-            endAdornment={
-              <InputAdornment sx={{ cursor: "pointer" }} position="end">
-                <SendIcon />
-              </InputAdornment>
-            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment sx={{ cursor: "pointer" }} position="end">
+                  <SendIcon />
+                </InputAdornment>
+              ),
+              disableUnderline: true,
+            }}
           />
         </Box>
         <Box display="flex" gap="87px">
