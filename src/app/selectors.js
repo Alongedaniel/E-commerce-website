@@ -1,20 +1,18 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 const useSelectors = () => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
   const error = useSelector((state) => state.user.error);
-  const authenticatedUser = useSelector(
-    (state) => state.user.authenticatedUser
-  );
-  const isAuthenticatedUser = useSelector(
-    (state) => state.user.isAuthenticatedUser
-  );
+  const authenticatedUser = useSelector((state) => state.user.currentUser);
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   return {
     user,
     authenticatedUser,
     error,
-    isAuthenticatedUser,
+    isAuthenticated,
+    dispatch,
   };
 };
 
